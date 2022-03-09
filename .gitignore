@@ -1,0 +1,4 @@
+zig-*
+debug
+release
+build.sh
