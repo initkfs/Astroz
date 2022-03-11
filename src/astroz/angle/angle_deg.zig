@@ -1,5 +1,6 @@
 const std = @import("std");
 const math = std.math;
+const fmt = std.fmt;
 
 pub fn AngleDeg(comptime IntType: type, comptime FloatType: type) type {
     return struct {
@@ -43,6 +44,10 @@ pub fn AngleDeg(comptime IntType: type, comptime FloatType: type) type {
             angle.isNeg = isNeg;
             return angle;
         }
+
+        pub fn toString(angle: Self, alloc: std.mem.Allocator) fmt.AllocPrintError![]u8 {
+            return fmt.allocPrint(alloc, "{d}°{d}'{e}\"", .{ angle.deg, angle.min, angle.sec });
+        }
     };
 }
 
@@ -64,4 +69,13 @@ test "Test decimal degrees to angle" {
     try expect(angle.deg == 35);
     try expect(angle.min == 20);
     try expect(math.approxEqAbs(f64, angle.sec, 3.26400000000433, math.epsilon(f64)));
+}
+
+test "Test angle to string" {
+    const expect = std.testing.expect;
+    const angle = AngleDeg(i32, f64).fromDecimalDeg(35.33424);
+    const allocator = std.heap.page_allocator;
+    const st = try angle.toString(allocator);
+    defer allocator.free(st);
+    try expect(std.mem.eql(u8, st, "35°20'3.26400000000433e+00\""));
 }
