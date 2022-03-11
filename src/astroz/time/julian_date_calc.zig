@@ -2,6 +2,8 @@ const std = @import("std");
 const math = std.math;
 const dt = @import("astro_local_datetime.zig");
 
+pub const julianDaysEpoch2000 = 2451545.0;
+
 pub fn gregorianToJulianJD(comptime IntType: type, comptime FloatType: type, dateTime: dt.AstroLocalDateTime(IntType)) FloatType {
     //TODO validate date
     const coeffA: IntType = @divTrunc((14 - dateTime.month), 12);
