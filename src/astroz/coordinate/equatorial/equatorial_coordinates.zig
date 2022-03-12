@@ -1,8 +1,8 @@
-const EquatorialRightAscension = @import("equatorial_right_ascension.zig");
+const ra = @import("equatorial_right_ascension.zig");
 
 pub fn EquatorialCoordinates(comptime FloatType: type) type {
     return struct {
         declination: FloatType,
-        rightAscension: EquatorialRightAscension,
+        rightAscension: ra.EquatorialRightAscension(FloatType),
     };
 }

@@ -55,6 +55,10 @@ pub fn degToRadians(comptime FloatType: type, valueDeg: FloatType) FloatType {
     return valueDeg * (math.pi / 180.0);
 }
 
+pub fn radToDeg(comptime FloatType: type, valueRad: FloatType) FloatType {
+    return valueRad * (180.0 / math.pi);
+}
+
 test "Test full circle angle" {
     const expect = std.testing.expect;
     const epsilon = math.epsilon(f64);
