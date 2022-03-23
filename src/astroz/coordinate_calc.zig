@@ -8,10 +8,7 @@ const ecliptic = @import("coordinate/ecliptic/geocentric_ecliptic_coordinates.zi
 const equatorial = @import("coordinate/equatorial/equatorial_coordinates.zig");
 const equatorialRA = @import("coordinate/equatorial/equatorial_right_ascension.zig");
 
-const julianDateTimeCalc = @import("time/julian_date_calc.zig");
-
 //TODO move to coordinate package after fix import from parent directories
-
 pub fn toEquatorial(comptime IntType: type, FloatType: type, date: dateTime.AstroLocalDateTime(IntType), eclipticCoords: ecliptic.GeocentricEclipticCoordinates(FloatType)) equatorial.EquatorialCoordinates(FloatType) {
     const eclipticLongitude: FloatType = eclipticCoords.longitudeDeg;
 

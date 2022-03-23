@@ -1,4 +1,6 @@
 const std = @import("std");
+const mem = std.mem;
+const panic = std.debug.panic;
 
 pub fn build(b: *std.build.Builder) void {
     var features = std.Target.Cpu.Feature.Set.empty;
@@ -32,9 +34,32 @@ pub fn build(b: *std.build.Builder) void {
     const step = b.step("run", "Run executable");
     step.dependOn(&runAppStep.step);
 
-    const mainTests = b.addTest(mainFile);
-    mainTests.setBuildMode(mode);
+    const allocator = std.heap.page_allocator;
+    //TODO extract ./src to variable
+    const sourceDir = std.fs.cwd().openDir("./src", .{ .iterate = true }) catch |err| panic("Error opening source directory: {}", .{err});
+
+    var walker = sourceDir.walk(allocator) catch |err| panic("Source directory walk error: {}", .{err});
+    defer walker.deinit();
 
     const testStep = b.step("test", "Run tests");
-    testStep.dependOn(&mainTests.step);
+
+    while (walker.next()) |mustBeEntry| {
+        if (mustBeEntry) |entry| {
+            const path = entry.path;
+            if (entry.kind != .File or !mem.endsWith(u8, path, ".zig") or std.mem.indexOf(u8, path, "zig-cache") != null) {
+                continue;
+            }
+
+            const fullPath = mem.concat(allocator, u8, &[_][]const u8{ "./src/", path }) catch |err| panic("Full test file path concatenation error: {}", .{err});
+            defer allocator.free(fullPath);
+            
+            const testFile = b.addTest(fullPath);
+            testFile.setBuildMode(mode);
+            testStep.dependOn(&testFile.step);
+        } else {
+            break;
+        }
+    } else |_| {
+        unreachable;
+    }
 }
