@@ -10,7 +10,7 @@ fn toFullCircleAnyRangeDeg(comptime FloatType: type, valueDegs: FloatType, start
     const epsilon = math.epsilon(FloatType);
 
     var mustBeNormalize: FloatType = valueDegs;
-    if (math.approxEqRel(FloatType, mustBeNormalize, startDeg, epsilon) or math.approxEqRel(FloatType, endDeg, epsilon)) {
+    if (math.approxEqRel(FloatType, mustBeNormalize, startDeg, epsilon) or math.approxEqRel(FloatType, mustBeNormalize, endDeg, epsilon)) {
         return mustBeNormalize;
     }
 

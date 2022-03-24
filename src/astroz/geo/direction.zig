@@ -1,4 +1,4 @@
 
-const CardinalDirection = enum {
+pub const CardinalDirection = enum {
     north, south, west, east,
 };

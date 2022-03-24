@@ -23,11 +23,11 @@ pub fn hoursToTime(comptime IntType: type, comptime FloatType: type, hoursValue:
     };
 }
 
-pub fn timeToDecimalHours(comptime IntType: type, comptime FloatType: type, time: dt.AstroLocalTime) FloatType {
+pub fn timeToDecimalHours(comptime IntType: type, comptime FloatType: type, time: dt.AstroLocalTime(IntType)) FloatType {
     const hours: IntType = time.hour;
     const hoursFromSec: FloatType = @intToFloat(FloatType, time.second) / 3600;
     const hoursFromMin: FloatType = @intToFloat(FloatType, time.minute) / 60;
-    const result: FloatType = hours + hoursFromMin + hoursFromSec;
+    const result: FloatType = @intToFloat(FloatType, hours) + hoursFromMin + hoursFromSec;
     return result;
 }
 

@@ -23,20 +23,20 @@ pub fn lstToGst(comptime FloatType: type, lst: FloatType, longitude: FloatType, 
     return result;
 }
 
-pub fn gstToLst(comptime IntType: type, comptime FloatType: type, time: dt.AstroLocalTime, longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection) FloatType {
+pub fn gstToLst(comptime IntType: type, comptime FloatType: type, time: dt.AstroLocalTime(IntType), longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection) FloatType {
     const hoursForm: FloatType = dtCalc.timeToDecimalHours(time);
     const resultGst: FloatType = gstToLst(IntType, FloatType, hoursForm, longitude, longitudeDirection);
     return resultGst;
 }
 
-pub fn gstHoursToLst(comptime IntType: type, comptime FloatType: type, hoursForm: FloatType, longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection) FloatType {
+pub fn gstHoursToLst(comptime FloatType: type, hoursForm: FloatType, longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection) FloatType {
     var longitudeForCalc: FloatType = longitude;
     if (longitudeDirection == geoDirection.CardinalDirection.west) {
         longitudeForCalc = -longitudeForCalc;
     }
 
     const longitudeHours: FloatType = longitudeForCalc / 15.0;
-    const lstHours: FloatType = dtCalc.fixHour(IntType, FloatType, hoursForm + longitudeHours);
+    const lstHours: FloatType = dtCalc.fixHour(FloatType, hoursForm + longitudeHours);
     return lstHours;
 }
 
@@ -46,10 +46,10 @@ pub fn gstToLstTime(comptime IntType: type, comptime FloatType: type, time: dt.A
     return timeForm;
 }
 
-pub fn utToGst(comptime IntType: type, comptime FloatType: type, date: dt.AstroLocalTime) FloatType {
-    const jd: FloatType = julCalc.gregorianToJulianJD(IntType, FloatType, dt);
+pub fn utToGst(comptime IntType: type, comptime FloatType: type, date: dt.AstroLocalDateTime(IntType)) FloatType {
+    const jd: FloatType = julCalc.gregorianToJulianJD(IntType, FloatType, date);
     const dayDiff: FloatType = (jd - 2451545.0) / 36525.0;
-    var t0: FloatType = dtCalc.fixHour(IntType, FloatType, (6.697374558 + (2400.051336 * dayDiff) + (0.000025862 * math.pow(FloatType, dayDiff, 2))));
+    var t0: FloatType = dtCalc.fixHour(FloatType, (6.697374558 + (2400.051336 * dayDiff) + (0.000025862 * math.pow(FloatType, dayDiff, 2))));
     if (t0 < 0) {
         t0 += 24;
     }
@@ -57,7 +57,7 @@ pub fn utToGst(comptime IntType: type, comptime FloatType: type, date: dt.AstroL
     var utHours: FloatType = dtCalc.timeToDecimalHours(IntType, FloatType, .{ .hour = date.hour, .minute = date.minute, .second = date.second });
     utHours = utHours * 1.002737909;
 
-    var gstTime: FloatType = dtCalc.fixHour(IntType, FloatType, t0 + utHours);
+    var gstTime: FloatType = dtCalc.fixHour(FloatType, t0 + utHours);
     if (gstTime < 0) {
         gstTime += 24;
     }
