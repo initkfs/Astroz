@@ -17,3 +17,12 @@ pub fn AstroLocalDate(comptime IntType: type) type {
        day:IntType = 0,
     };
 }
+
+//TODO validate
+pub fn AstroLocalTime(comptime IntType: type) type {
+    return struct {
+       hour: IntType = 0,
+       minute: IntType = 0,
+       second:IntType = 0,
+    };
+}
