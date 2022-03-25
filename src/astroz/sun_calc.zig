@@ -140,7 +140,10 @@ fn calculateLocalSiderialTime(comptime FloatType: type, latitude: FloatType, rig
     //const Ar: FloatType = angleCalc.radToDeg(FloatType, math.acos(cosAr));
     //const As: FloatType = 360 - Ar;
 
-    const quantityH: FloatType = 1 / 15.0 * angleCalc.radToDeg(FloatType, math.acos(-math.tan(angleCalc.degToRadians(FloatType, latitude)))) * math.tan(angleCalc.degToRadians(FloatType, declination));
+    const latitudeRad:FloatType = angleCalc.degToRadians(FloatType, latitude);
+    const declinationRad:FloatType = angleCalc.degToRadians(FloatType, declination);
+    const acosH:FloatType = math.acos(-math.tan(latitudeRad) * math.tan(declinationRad));
+    const quantityH: FloatType = (1.0 / 15.0) * angleCalc.radToDeg(FloatType, acosH);
 
     const LSTr: FloatType = dateTimeCalc.fixHour(FloatType, 24 + rightAscensionHours - quantityH);
     const LSTs: FloatType = dateTimeCalc.fixHour(FloatType, rightAscensionHours + quantityH);
@@ -159,4 +162,13 @@ test "Test gregorian to julian" {
     try expect(math.approxEqRel(f64, result.meanAnomalyDeg, 202.22987075000037, epsilon));
     try expect(math.approxEqRel(f64, result.meanLongitudeDeg, 124.82757850000053, epsilon));
     try expect(math.approxEqRel(f64, result.geocentricEclipticCoords.distanceAstroUnits, 1.0155080797699694, epsilon));
+}
+
+test "Test sunrise-sunset" {
+    const expect = std.testing.expect;
+
+    const date = dateTime.AstroLocalDateTime(i64){ .year = 2022, .month = 4, .day = 1 };
+    const result = calculateSunRiseSet(i64, f64, date, 73, 40, geoDirect.CardinalDirection.west);
+    try expect(result.sunrise.hour == 10 and result.sunrise.minute > 25 and result.sunrise.minute < 45);
+    try expect(result.sunset.hour == 23 and result.sunset.minute > 5 and result.sunset.minute < 25);
 }
