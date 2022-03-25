@@ -65,11 +65,11 @@ pub fn utToGst(comptime IntType: type, comptime FloatType: type, date: dt.AstroL
     return gstTime;
 }
 
-pub fn gstToUt(comptime IntType: type, comptime FloatType: type, date: dt.AstroLocalDateTime, gstHours: FloatType) FloatType {
+pub fn gstToUt(comptime IntType: type, comptime FloatType: type, date: dt.AstroLocalDateTime(IntType), gstHours: FloatType) FloatType {
     const jd: FloatType = julCalc.gregorianToJulianJD(IntType, FloatType, date);
     const dayDiff: FloatType = (jd - 2451545.0) / 36525.0;
-    const t0: FloatType = dtCalc.fixHour(IntType, FloatType, (6.697374558 + (2400.051336 * dayDiff) + (0.000025862 * math.pow(FloatType, dayDiff, 2))));
-    const subGst: FloatType = dtCalc.fixHour(IntType, FloatType, gstHours - t0);
+    const t0: FloatType = dtCalc.fixHour(FloatType, (6.697374558 + (2400.051336 * dayDiff) + (0.000025862 * math.pow(FloatType, dayDiff, 2))));
+    const subGst: FloatType = dtCalc.fixHour(FloatType, gstHours - t0);
     const utHours: FloatType = subGst * 0.9972695663;
 
     return utHours;

@@ -11,13 +11,13 @@ pub fn deltaT(comptime IntType: type, comptime FloatType: type, year: IntType) F
     return delta;
 }
 
-pub fn hoursToTime(comptime IntType: type, comptime FloatType: type, hoursValue: FloatType) dt.AstroLocalTime {
+pub fn hoursToTime(comptime IntType: type, comptime FloatType: type, hoursValue: FloatType) dt.AstroLocalTime(IntType) {
     const hours: IntType = @floatToInt(IntType, hoursValue);
     const minsPart: FloatType = (hoursValue - @intToFloat(FloatType, hours)) * 60;
     const mins: IntType = @floatToInt(IntType, minsPart);
     const sec: IntType = @floatToInt(IntType, ((minsPart - @intToFloat(FloatType, mins)) * 60));
     return .{
-        .hours = hours,
+        .hour = hours,
         .minute = mins,
         .second = sec,
     };
