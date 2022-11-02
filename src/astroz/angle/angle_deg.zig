@@ -19,7 +19,7 @@ pub fn AngleDeg(comptime IntType: type, comptime FloatType: type) type {
         pub fn toDecimalDeg(angle: Self) FloatType {
             const degValue: FloatType = @intToFloat(FloatType, angle.deg);
             const minValue: FloatType = @intToFloat(FloatType, angle.min);
-            const result: FloatType = math.absFloat(degValue) + (math.absFloat(minValue) / angle.minInDeg) + (math.absFloat(angle.sec) / angle.secInDeg);
+            const result: FloatType = @fabs(degValue) + (@fabs(minValue) / angle.minInDeg) + (@fabs(angle.sec) / angle.secInDeg);
 
             if (angle.isNeg) {
                 return -result;
@@ -31,7 +31,7 @@ pub fn AngleDeg(comptime IntType: type, comptime FloatType: type) type {
         pub fn fromDecimalDeg(value: FloatType) Self {
             var angle: Self = AngleDeg(IntType, FloatType){};
 
-            const absValue: FloatType = math.absFloat(value);
+            const absValue: FloatType = @fabs(value);
             const deg: IntType = @floatToInt(IntType, absValue);
             const minPart: FloatType = (absValue - @intToFloat(FloatType, deg)) * angle.minInDeg;
             const min: IntType = @floatToInt(IntType, minPart);

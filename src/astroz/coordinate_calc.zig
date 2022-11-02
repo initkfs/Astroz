@@ -12,7 +12,7 @@ const geoDirection = @import("geo/direction.zig");
 const horizontal = @import("coordinate/horizontal/horizontal_coordinates.zig");
 
 //TODO move to coordinate package after fix import from parent directories
-pub fn rightAscensionToHourAngle(comptime IntType: type, FloatType: type, raDeg: FloatType, utcTime: dateTime.AstroLocalDateTime(IntType), longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection) FloatType {
+pub fn rightAscensionToHourAngle(comptime IntType: type, comptime FloatType: type, raDeg: FloatType, utcTime: dateTime.AstroLocalDateTime(IntType), longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection) FloatType {
     const gst: FloatType = timeCalc.utToGst(IntType, FloatType, utcTime);
     const lst: FloatType = timeCalc.gstHoursToLst(FloatType, gst, longitude, longitudeDirection);
     const raHours: FloatType = rightAscensionToHours(FloatType, raDeg);
@@ -32,7 +32,7 @@ pub fn hoursAngleToDeg(comptime FloatType: type, hourAngle: FloatType) FloatType
     return hourAngle * 15.0;
 }
 
-pub fn toHorizontal(comptime IntType: type, FloatType: type, equatorialCoords: equatorial.EquatorialCoordinates(FloatType), utcTime: dateTime.AstroLocalDateTime(IntType), longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection, latitude: FloatType) horizontal.HorizontalCoordinates(FloatType) {
+pub fn toHorizontal(comptime IntType: type, comptime FloatType: type, equatorialCoords: equatorial.EquatorialCoordinates(FloatType), utcTime: dateTime.AstroLocalDateTime(IntType), longitude: FloatType, longitudeDirection: geoDirection.CardinalDirection, latitude: FloatType) horizontal.HorizontalCoordinates(FloatType) {
     const declinationDeg: FloatType = equatorialCoords.declination;
     const hourAngle: FloatType = rightAscensionToHourAngle(IntType, FloatType, equatorialCoords.rightAscension.deg, utcTime, longitude, longitudeDirection);
 
@@ -54,7 +54,7 @@ pub fn toHorizontal(comptime IntType: type, FloatType: type, equatorialCoords: e
     };
 }
 
-pub fn toEquatorial(comptime IntType: type, FloatType: type, date: dateTime.AstroLocalDateTime(IntType), eclipticCoords: ecliptic.GeocentricEclipticCoordinates(FloatType)) equatorial.EquatorialCoordinates(FloatType) {
+pub fn toEquatorial(comptime IntType: type, comptime FloatType: type, date: dateTime.AstroLocalDateTime(IntType), eclipticCoords: ecliptic.GeocentricEclipticCoordinates(FloatType)) equatorial.EquatorialCoordinates(FloatType) {
     const eclipticLongitude: FloatType = eclipticCoords.longitudeDeg;
 
     const meanObliquitySun: FloatType = calculateObliquityDeg(IntType, FloatType, date);
