@@ -35,8 +35,10 @@ pub fn build(b: *std.build.Builder) void {
     step.dependOn(&runAppStep.step);
 
     const allocator = std.heap.page_allocator;
-    //TODO extract ./src to variable
-    const sourceDir = std.fs.cwd().openDir("./src", .{ .iterate = true }) catch |err| panic("Error opening source directory: {}", .{err});
+    
+    //TODO ./src path?
+    var sourceDir = std.fs.cwd().openIterableDir("..", .{}) catch |err| panic("Error opening source directory: {}", .{err});
+    defer sourceDir.close();
 
     var walker = sourceDir.walk(allocator) catch |err| panic("Source directory walk error: {}", .{err});
     defer walker.deinit();
@@ -51,6 +53,7 @@ pub fn build(b: *std.build.Builder) void {
             }
 
             const fullPath = mem.concat(allocator, u8, &[_][]const u8{ "./src/", path }) catch |err| panic("Full test file path concatenation error: {}", .{err});
+            std.debug.print("Found test file: {s}\n", .{fullPath});
             defer allocator.free(fullPath);
             
             const testFile = b.addTest(fullPath);
